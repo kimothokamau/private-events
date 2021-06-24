@@ -1,14 +1,37 @@
+<%= form_with(model: user, local: true) do |form| %>
 
-<%= simple_form_for(@user) do |f| %>
-  <%= f.error_notification %>
-  <%= f.error_notification message: f.object.errors[:base].to_sentence if f.object.errors[:base].present? %>
+  <% if user.errors.any? %>
+    <div class="box box-radius has-background-danger has-text-white">
+      <div id="error_explanation">
+        <h2><%= pluralize(user.errors.count, "error") %> prohibited this user from being saved:</h2>
+        <ul>
+          <% user.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  <% end %>
 
-  <div class="form-inputs">
-    <%= f.input :name %>
-    <%= f.input :email %>
-  </div>
+  <div class="actions">
+    <div class="field">
+      <%= form.label :name, class:'label' %>
+      <div class="control">
+        <%= form.text_field :name, class:'input is-primary' %>
+      </div>
 
-  <div class="form-actions">
-    <%= f.button :submit %>
+      <%= form.label :email, class:'label' %>
+      <div class="control">
+        <%= form.email_field :email, class:'input is-primary' %>
+      </div>
+
+    <!--  <%= form.label :password %>
+      <%= form.password_field :password %>
+
+      <%= form.label :password_confirmation, "Confirmation" %>
+      <%= form.password_field :password_confirmation %> -->
+
+      <%= form.submit 'Submit', class:'button is-primary' %>
+    </div>
   </div>
 <% end %>

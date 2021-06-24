@@ -27,6 +27,7 @@ gem 'jbuilder', '~> 2.7'
 gem 'bulma-rails', '~> 0.0.4.1'
 gem 'simple_form', '~> 5.1'
 gem 'gravatar_image_tag', '~> 1.2'
+gem 'font-awesome-rails'
 
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.4', require: false
