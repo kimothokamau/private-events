@@ -1,13 +1,19 @@
 class EventtsController < ApplicationController
+  include EventtsHelper
+
   before_action :set_eventt, only: %i[ show edit update destroy ]
+  before_action :signed_in_only!, only: [:index]
 
   # GET /eventts or /eventts.json
   def index
-    @eventts = Eventt.all
+    @upcoming_eventts = Eventt.upcoming
+    @prev_eventts = Eventt.previous
   end
 
   # GET /eventts/1 or /eventts/1.json
   def show
+    @eventt = Eventt.find(params[:id])
+    @attendees = @eventt.attendees
   end
 
   # GET /eventts/new
@@ -21,14 +27,13 @@ class EventtsController < ApplicationController
 
   # POST /eventts or /eventts.json
   def create
-    @eventt = Eventt.new(eventt_params)
-
+    @eventt = current_user.eventts.build(eventt_params)
     respond_to do |format|
-      if @eventt.save
-        format.html { redirect_to @eventt, notice: "Eventt was successfully created." }
-        format.json { render :show, status: :created, location: @eventt }
+      if @eventt.save && !current_user.nil?
+        format.html { redirect_to root_path, notice: 'Eventt was successfully created.' }
+        format.json { render :show, status: :created, location: @event }
       else
-        format.html { render :new, status: :unprocessable_entity }
+        format.html { render :new }
         format.json { render json: @eventt.errors, status: :unprocessable_entity }
       end
     end
@@ -37,11 +42,11 @@ class EventtsController < ApplicationController
   # PATCH/PUT /eventts/1 or /eventts/1.json
   def update
     respond_to do |format|
-      if @eventt.update(eventt_params)
-        format.html { redirect_to @eventt, notice: "Eventt was successfully updated." }
-        format.json { render :show, status: :ok, location: @eventt }
+      if @eventt.update(eventt_params) && !current_user.nil?
+        format.html { redirect_to @event, notice: 'Eventt was successfully updated.' }
+        format.json { render :show, status: :ok, location: @event }
       else
-        format.html { render :edit, status: :unprocessable_entity }
+        format.html { render :edit }
         format.json { render json: @eventt.errors, status: :unprocessable_entity }
       end
     end
@@ -51,7 +56,7 @@ class EventtsController < ApplicationController
   def destroy
     @eventt.destroy
     respond_to do |format|
-      format.html { redirect_to eventts_url, notice: "Eventt was successfully destroyed." }
+      format.html { redirect_to user_path(current_user), notice: 'Event was successfully destroyed.' }
       format.json { head :no_content }
     end
   end
